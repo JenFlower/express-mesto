@@ -27,10 +27,10 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.send({ data: user }))
-    .onFail(() => {
+    .orFail(() => {
       throw new Error('NotFound');
     })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
@@ -50,10 +50,10 @@ module.exports.updateProfile = (req, res) => {
     { name, about },
     opts,
   )
-    .then((user) => res.send({ data: user }))
     .orFail(() => {
       throw new Error('NotFound');
     })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные при обновлении профиля' });
@@ -73,10 +73,10 @@ module.exports.updateAvatar = (req, res) => {
     { avatar },
     opts,
   )
-    .then((user) => res.send({ data: user }))
-    .onFail(() => {
+    .orFail(() => {
       throw new Error('NotFound');
     })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные при обновлении аватара' });
