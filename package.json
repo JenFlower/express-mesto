@@ -1,9 +1,14 @@
 {
   "name": "mesto-server",
   "version": "0.1.0",
+  "description": "Backend for Mesto project based to Express",
+  "author": {
+    "name" : "Olga Terekhova",
+    "email" : "olga.terekhova97@gmail.com",
+    "url" : "https://github.com/JenFlower"
+  },
   "private": true,
   "dependencies": {
-
     "express": "^4.17.2",
     "mongoose": "^6.1.3"
   },
