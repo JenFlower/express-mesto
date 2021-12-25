@@ -1,29 +1,27 @@
 {
   "name": "mesto-server",
   "version": "0.1.0",
+  "description": "Backend for Mesto project based to Express",
+  "author": {
+    "name" : "Olga Terekhova",
+    "email" : "olga.terekhova97@gmail.com",
+    "url" : "https://github.com/JenFlower"
+  },
   "private": true,
   "dependencies": {
-    "eslint": "^8.5.0",
     "express": "^4.17.2",
     "mongoose": "^6.1.3"
   },
   "devDependencies": {
+    "eslint": "^8.5.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.3",
     "nodemon": "^2.0.15"
   },
   "scripts": {
-    "start": "nodemon app.js",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "lint": "npx eslint ."
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

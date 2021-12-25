@@ -1,8 +1,5 @@
+import { ERROR_DEFAULT, ERROR_INCORRECT_VALUE, ERROR_NOT_FOUND } from '../constants'
 const Card = require('../models/card');
-
-const ERROR_DEFAULT = 500;
-const ERROR_INCORRECT_VALUE = 400;
-const ERROR_NOT_FOUND = 404;
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -11,7 +8,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then(card => res.send({ data: card }))
     .catch(err => {
-      if(err.name === 'IncorrectValueError') {
+      if(err.name === 'ValidationError') {
         res.status(ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные при создании карточки'});
       }
       else {
@@ -33,7 +30,14 @@ module.exports.deleteCard = (req, res) => {
       card.deleteOne();
       res.send({data: card});
     })
-    .catch((err) => res.status(ERROR_NOT_FOUND).send({message: 'Карточка с указанным _id не найдена'}));
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
+    .catch(err => {
+      if(err.message === 'NotFound') {
+        res.status(ERROR_NOT_FOUND).send({message: 'Карточка с указанным _id не найдена'})
+      }
+    })
 };
 
 module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
@@ -42,11 +46,14 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
 .then(like => res.send({ data: like }))
+.onFail(() => {
+  throw  new Error('NotFound');
+})
 .catch(err => {
-  if(err.name === 'IncorrectValueError') {
+  if(err.name === 'CastError') {
     res.status(ERROR_INCORRECT_VALUE).send({message: 'Переданы некорректные данные для постановки лайка'});
   }
-  else if(err.name === 'NotFound') {
+  if(err.message === 'NotFound') {
     res.status(ERROR_NOT_FOUND).send({message: 'Передан несуществующий _id карточки'});
   }
   else {
@@ -60,11 +67,14 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
 .then(like => res.send({ data: like }))
+.onFail(() => {
+  throw  new Error('NotFound');
+})
 .catch(err => {
-  if(err.name === 'IncorrectValueError') {
+  if(err.name === 'CastError') {
     res.status(ERROR_INCORRECT_VALUE).send({message: 'Переданы некорректные данные для снятия лайка'});
   }
-  else if(err.name === 'NotFound') {
+  if(err.message === 'NotFound') {
     res.status(ERROR_NOT_FOUND).send({message: 'Передан несуществующий _id карточки'});
   }
   else {

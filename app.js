@@ -1,3 +1,4 @@
+import * as constants from './constants'
 const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -26,5 +27,7 @@ app.use((req, res, next) => {
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use((req, res) => {
+  res.status(constants.ERROR_NOT_FOUND).send({ message: 'Порт не существует' });
+});
 app.listen(PORT, () => console.log(`server on port ${PORT}`));
