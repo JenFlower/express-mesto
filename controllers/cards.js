@@ -1,4 +1,4 @@
-import * as constants from '../constants'
+import { ERROR_DEFAULT, ERROR_INCORRECT_VALUE, ERROR_NOT_FOUND } from '../constants'
 const Card = require('../models/card');
 
 module.exports.createCard = (req, res) => {
@@ -9,10 +9,10 @@ module.exports.createCard = (req, res) => {
     .then(card => res.send({ data: card }))
     .catch(err => {
       if(err.name === 'ValidationError') {
-        res.status(constants.ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные при создании карточки'});
+        res.status(ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные при создании карточки'});
       }
       else {
-        res.status(constants.ERROR_DEFAULT).send({ message: 'Ошибка по умолчанию'});
+        res.status(ERROR_DEFAULT).send({ message: 'Ошибка по умолчанию'});
       }
     });
 };
@@ -20,7 +20,7 @@ module.exports.createCard = (req, res) => {
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then(cards => res.send({data: cards}))
-    .catch((err) => res.status(constants.ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -35,7 +35,7 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch(err => {
       if(err.message === 'NotFound') {
-        res.status(constants.ERROR_NOT_FOUND).send({message: 'Карточка с указанным _id не найдена'})
+        res.status(ERROR_NOT_FOUND).send({message: 'Карточка с указанным _id не найдена'})
       }
     })
 };
@@ -51,13 +51,13 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
 })
 .catch(err => {
   if(err.name === 'CastError') {
-    res.status(constants.ERROR_INCORRECT_VALUE).send({message: 'Переданы некорректные данные для постановки лайка'});
+    res.status(ERROR_INCORRECT_VALUE).send({message: 'Переданы некорректные данные для постановки лайка'});
   }
   if(err.message === 'NotFound') {
-    res.status(constants.ERROR_NOT_FOUND).send({message: 'Передан несуществующий _id карточки'});
+    res.status(ERROR_NOT_FOUND).send({message: 'Передан несуществующий _id карточки'});
   }
   else {
-    res.status(constants.ERROR_DEFAULT).send({ message: 'Ошибка по умолчанию' });
+    res.status(ERROR_DEFAULT).send({ message: 'Ошибка по умолчанию' });
   }
 })
 
@@ -72,12 +72,12 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
 })
 .catch(err => {
   if(err.name === 'CastError') {
-    res.status(constants.ERROR_INCORRECT_VALUE).send({message: 'Переданы некорректные данные для снятия лайка'});
+    res.status(ERROR_INCORRECT_VALUE).send({message: 'Переданы некорректные данные для снятия лайка'});
   }
   if(err.message === 'NotFound') {
-    res.status(constants.ERROR_NOT_FOUND).send({message: 'Передан несуществующий _id карточки'});
+    res.status(ERROR_NOT_FOUND).send({message: 'Передан несуществующий _id карточки'});
   }
   else {
-    res.status(constants.ERROR_DEFAULT).send({ message: 'Ошибка по умолчанию' });
+    res.status(ERROR_DEFAULT).send({ message: 'Ошибка по умолчанию' });
   }
 })
