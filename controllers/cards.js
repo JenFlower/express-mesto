@@ -26,16 +26,21 @@ module.exports.getCards = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findById(cardId)
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((card) => {
       card.deleteOne();
       res.send({ data: card });
     })
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные для постановки лайка' });
+      }
       if (err.message === 'NotFound') {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };
@@ -45,10 +50,10 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   { new: true },
 )
-  .then((like) => res.send({ data: like }))
   .orFail(() => {
     throw new Error('NotFound');
   })
+  .then((like) => res.send({ data: like }))
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные для постановки лайка' });
@@ -65,10 +70,10 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   { new: true },
 )
-  .then((like) => res.send({ data: like }))
-  .onFail(() => {
+  .orFail(() => {
     throw new Error('NotFound');
   })
+  .then((like) => res.send({ data: like }))
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(ERROR_INCORRECT_VALUE).send({ message: 'Переданы некорректные данные для снятия лайка' });
