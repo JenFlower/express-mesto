@@ -11,7 +11,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  owner: {  // ссылка на модель карточки автора
+  owner: { // ссылка на модель карточки автора
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
@@ -19,12 +19,12 @@ const cardSchema = new mongoose.Schema({
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    default: []
+    default: [],
   }],
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model('card', cardSchema);
